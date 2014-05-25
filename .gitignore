@@ -2,7 +2,7 @@
 mongodb
 
 # Private files (eg. aws keys)
-*.private
+*-private*
 
 # Old files (backup)
 *.old

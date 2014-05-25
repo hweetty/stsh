@@ -1,6 +1,6 @@
 var fs  = require("fs");
 var AWS = require('aws-sdk');
-AWS.config.loadFromPath('./aws-config.json.private');
+AWS.config.loadFromPath('./aws-config-private.json');
 
 var BUCKET = "bckt-ca";
 

@@ -5,16 +5,10 @@ var express = require('express'),
 	app = express();
 
 //Load configuration file
-var config = JSON.parse(fileSystem.readFileSync(__dirname + '/config.json'));
+var mongo = JSON.parse(fileSystem.readFileSync(__dirname + '/mongodb-private.json'));
+mongoose.connect('mongodb://' + mongo.username +':'+ mongo.password + '@' + mongo.url);
 
-//Connect to database
-if (!config.mongodb.username) {
-	mongoose.connect('mongodb://localhost/' + config.mongodb.database);
-}
-else {
-	mongoose.connect('mongodb://' + config.mongodb.username + ':' + config.mongodb.password + '@' + config.mongodb.domain + '/' + config.mongodb.database);
-}
-
+console.log('mongodb://' + mongo.username +':'+ mongo.password + '@' + mongo.url);
 mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 //Setup express
@@ -36,10 +30,10 @@ var upload = require('./controllers/upload.js');
 // Uploads
 app.get ("/f/:path",         upload.get);
 app.post(api+ "upload",           upload.post);
-app.use("/", express.static("../"));
+app.use("/", express.static("../front"));
 
 
 //Start server
 var server = app.listen(2718);
 
-console.log('Node/Express server started on ' + config.environment + ' server!');
+console.log('Node/Express server started!');
