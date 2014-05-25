@@ -34,12 +34,12 @@ var api = "/api/1/";
 var upload = require('./controllers/upload.js');
 
 // Uploads
-app.get ("/files/:path",         upload.get);
+app.get ("/f/:path",         upload.get);
 app.post(api+ "upload",           upload.post);
 app.use("/", express.static("../"));
 
 
 //Start server
-var server = app.listen(3000);
+var server = app.listen(2718);
 
 console.log('Node/Express server started on ' + config.environment + ' server!');
