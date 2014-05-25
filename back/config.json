@@ -1,0 +1,6 @@
+{
+	"environment": "development",
+	"mongodb": {
+		"database": "bckt-ca"
+	}
+}

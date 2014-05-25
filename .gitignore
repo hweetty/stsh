@@ -1,3 +1,14 @@
+# Mongodb
+mongodb
+
+# Private files (eg. aws keys)
+*.private
+
+# Old files (backup)
+*.old
+
+#################
+
 # Logs
 logs
 *.log

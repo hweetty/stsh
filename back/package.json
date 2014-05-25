@@ -1,0 +1,14 @@
+{
+	"name": "stsh.ca",
+	"description": "Stash your files",
+	"version": "0.1.0",
+	"private": true,
+	"dependencies": {
+		"express": "3.8.x",
+		"mongoose": "3.x",
+		"mongoose-troop": "0.0.x",
+		"password-hash": "1.2.x",
+		"mongoose-auto-increment": "2.1.x",
+		"aws-sdk": "2.0.0-rc.14"
+	}
+}

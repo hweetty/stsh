@@ -1,0 +1,10 @@
+- work on frontend
+- make sure upload still works
+- test packages.json (install)
+- put on git private repo
+- add ssh keys to bumpy
+- clone repo on bumpy
+
+parcel
+
+- packet (pckt.ca)
