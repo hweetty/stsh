@@ -60,8 +60,7 @@ function uploadFile(file)
 
   var xhr = new XMLHttpRequest();
   xhr.onload = function(res) {
-    console.log("Upload complete.");
-    console.log(res);
+    console.log(res.target.response);
     progress.style.width = stash.style.width;
   };
   xhr.upload.addEventListener("progress", function(e) {
@@ -69,9 +68,7 @@ function uploadFile(file)
       console.log(e.loaded / e.total);
       var percentage = e.loaded / e.total;
 
-      // console.log("update progress: " + percentage);
-
-      var width = stash.style.width;
+      var width = stash.clientWidth;
       progress.style.width = Math.round(width * percentage) + "px";
     }
   });
