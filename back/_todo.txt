@@ -1,10 +1,19 @@
+
+WORKING
+
+- setup mac for instant html preview
 - work on frontend
+
+- get ssl certs
+- add certs to node
+- add mapping to router
+
+
+DONE
+
 - make sure upload still works
 - test packages.json (install)
 - put on git private repo
 - add ssh keys to bumpy
 - clone repo on bumpy
-
-parcel
-
-- packet (pckt.ca)
+- packet (pckt.ca) ?
