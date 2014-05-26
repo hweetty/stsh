@@ -1,15 +1,219 @@
 <html>
 
+<head>
 
+  <link rel="stylesheet" href="style.css">
+
+</head>
 <body>
 
+  <div id="stash">
 
-<form action="/api/1/upload" method="post" enctype="multipart/form-data">
-	<label for="file">Filename:</label>
-	<input type="file" name="file"><br>
-	<input type="submit" name="upload" value="Upload">
-</form>
+    <div id="add" class="">
+      <label class="info center">Drag file here</label>
+    </div>
 
+    <input id="file-input" class="hidden" type="file" accept="*/*" onchange="addFiles(this.files)">
+  </div>
+
+
+
+<script type="text/javascript">
+
+var add = document.getElementById("add");
+
+add.addEventListener("dragenter", function dragenter (e)
+{
+  e.stopPropagation();
+  e.preventDefault();
+
+  this.className = "green";
+  console.log("dragenter");
+}, false);
+add.addEventListener("dragover", function dragenter (e)
+{
+  e.stopPropagation();
+  e.preventDefault();
+
+  this.className = "green";
+  console.log("dragover");
+
+}, false);
+add.addEventListener("drop", function dragenter (e)
+{
+  e.stopPropagation();
+  e.preventDefault();
+
+  var dt = e.dataTransfer;
+  var files = dt.files;
+  addFiles(files);
+
+}, false);
+add.addEventListener("click", function dragenter (e)
+{
+  document.getElementById("file-input").click();
+  console.log("clicked");
+}, false);
+
+
+// var form = new FormData();
+// form.append("name", "Nicholas");
+// // create a form with a couple of values
+// var form = new FormData();
+// form.append("name", "Nicholas");
+// form.append("photo", control.files[0]);
+
+function uploadFile(file)
+{
+  
+  var form = new FormData();
+  // form.append("name", "Nicholas");
+  form.append("file", file);
+
+  // send via XHR - look ma, no headers being set!
+  var xhr = new XMLHttpRequest();
+  xhr.onload = function(res) {
+    console.log("Upload complete.");
+    console.log(res);
+  };
+  xhr.upload.addEventListener("progress", function(e) {
+    if (e.lengthComputable) {
+      var percentage = Math.round((e.loaded * 100) / e.total);
+      console.log("update progress: " + percentage);
+    }
+  });
+  
+  xhr.open("post", "http://localhost:2718/api/1/upload", true);
+  xhr.send(form);
+}
+
+
+
+function addFiles(files)
+{
+  console.log("selected files: ");
+  console.log(files);
+
+  console.log(files.length);
+  this.className = "";
+
+  for (var i = 0; i < files.length; i ++)
+  {
+    var file = files[i];
+    console.log("filename : " + file.name);
+    console.log("size     : " + file.size);
+    console.log("lastDate : " + file.LastModifiedDate);
+
+    uploadFile(file);
+  }
+}
+
+function dragenter(e) {
+}
+
+function dragover(e) {
+  e.stopPropagation();
+  e.preventDefault();
+  // this.className = "";
+  console.log("dragover");
+}
+
+function drop(e) {
+  e.stopPropagation();
+  e.preventDefault();
+
+  var dt = e.dataTransfer;
+  var files = dt.files;
+
+  console.log(files);
+  this.className = "";
+  //handleFiles(files);
+}
+
+
+// function sendFiles() {
+//   var imgs = document.querySelectorAll(".obj");
+  
+//   for (var i = 0; i < imgs.length; i++) {
+//     new FileUpload(imgs[i], imgs[i].file);
+//   }
+// }
+
+
+
+// window.URL = window.URL || window.webkitURL;
+
+// var fileSelect = document.getElementById("fileSelect"),
+//     fileElem = document.getElementById("fileElem"),
+//     fileList = document.getElementById("fileList");
+
+// fileSelect.addEventListener("click", function (e) {
+//   if (fileElem) {
+//     fileElem.click();
+//   }
+//   e.preventDefault(); // prevent navigation to "#"
+// }, false);
+
+// function handleFiles(files) {
+//   if (!files.length) {
+//     fileList.innerHTML = "<p>No files selected!</p>";
+//   } else {
+//     var list = document.createElement("ul");
+//     for (var i = 0; i < files.length; i++) {
+//       var li = document.createElement("li");
+//       list.appendChild(li);
+      
+//       var img = document.createElement("img");
+//       img.src = window.URL.createObjectURL(files[i]);
+//       img.height = 60;
+//       img.onload = function(e) {
+//         window.URL.revokeObjectURL(this.src);
+//       }
+//       li.appendChild(img);
+      
+//       var info = document.createElement("span");
+//       info.innerHTML = files[i].name + ": " + files[i].size + " bytes";
+//       li.appendChild(info);
+//     }
+//     fileList.appendChild(list);
+//   }
+// }
+
+
+
+
+
+// function FileUpload(img, file)
+// {
+//   var reader = new FileReader();  
+//   this.ctrl = createThrobber(img);
+//   var xhr = new XMLHttpRequest();
+//   this.xhr = xhr;
+  
+//   var self = this;
+//   this.xhr.upload.addEventListener("progress", function(e) {
+//         if (e.lengthComputable) {
+//           var percentage = Math.round((e.loaded * 100) / e.total);
+//           self.ctrl.update(percentage);
+//         }
+//       }, false);
+  
+//   xhr.upload.addEventListener("load", function(e){
+//           self.ctrl.update(100);
+//           var canvas = self.ctrl.ctx.canvas;
+//           canvas.parentNode.removeChild(canvas);
+//       }, false);
+//   xhr.open("POST", "http://demos.hacks.mozilla.org/paul/demos/resources/webservices/devnull.php");
+//   xhr.overrideMimeType('text/plain; charset=x-user-defined-binary');
+//   reader.onload = function(evt) {
+//     xhr.sendAsBinary(evt.target.result);
+//   };
+//   reader.readAsBinaryString(file);
+// }
+
+
+
+</script>
 
 </body>
 
