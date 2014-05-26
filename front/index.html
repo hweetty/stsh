@@ -68,10 +68,11 @@ function uploadFile(file)
     if (e.lengthComputable) {
       console.log(e.loaded / e.total);
       var percentage = e.loaded / e.total;
+
       // console.log("update progress: " + percentage);
 
       var width = stash.style.width;
-      progress.style.width = width * percentage;
+      progress.style.width = Math.round(width * percentage) + "px";
     }
   });
 
