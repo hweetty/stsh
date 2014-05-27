@@ -1,8 +1,12 @@
 
 WORKING
 
-- setup mac for instant html preview
+
 - work on frontend
+    - style upload button
+    - better progress bar update (average it out)
+    - preview images, docs
+    - 
 
 - get ssl certs
 - add certs to node

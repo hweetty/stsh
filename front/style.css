@@ -2,17 +2,33 @@
  * Stash your files
  */
 
-.stash-h1 { height: 309px; }
-.stash-h2 { height: 100px; }
+ * {
+  font-family: "HelveticaNeue", "Arial";
+ }
+
+/* Main */
+.stash1 {
+  width: 500px;
+  height: 309px;
+}
+.stash2 {
+  width: 420px;
+  height: 60px;
+}
 #stash {
   background: #F4F4F4;
   border: #DDD 2px solid;
-  width: 500px;
 
+  position: relative;
   margin-top: 220px;
   margin-left: auto;
   margin-right: auto;
+
+  transition: width 0.5s cubic-bezier(.56, .21, .23, .85),
+              height 0.45s cubic-bezier(.56, .21, .23, .85);
 }
+
+/* Add sign background */
 #add {
   background: url("add.png") no-repeat center center;
 
@@ -20,17 +36,53 @@
   height: 100%;
   margin: auto;
 }
+
+/* Progress bar for uploads */
 #progress {
   top:0;
   left:0;
 
   background: #A7D42C;
-  width:100%;
+  width: 0%;
   height: 100%;
 }
+
+/* Container for filename */
+#file-info {
+  border-top: #DDD 2px solid;
+  background: transparent;
+
+  position: absolute;
+  bottom: 0;
+
+  width: 100%;
+  height: 60px;
+}
+#file-info label {
+  font-size: 1.5em;
+  color: #555;
+
+  position: absolute;
+  bottom: 0;
+  margin: 15px;
+}
+
+#upload {
+  position: absolute;
+  bottom:0;
+  right:0;
+
+  width: 100px;
+  height: 60px;
+  margin: 15px;
+}
+
+/* Hidden file input control */
 #file-input {
 
 }
+
+
 
 .info {
   color: #ABABAB;

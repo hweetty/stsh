@@ -10,11 +10,18 @@
   <div id="stash" class="">
 
     <div id="add" class="hidden">
-      <label class="info center">Drag file here</label>
+      <label class="info center">Drag file here - animate to 'x'</label>
     </div>
 
     <div id="progress" class="">
+    </div>
 
+    <div id="file-info" class="">
+      <div id="preview" class="">
+        <img src="">
+      </div>
+      <label id="filename" class="text">file.png</label>
+      <input id="upload" class="" type="button" value="Upload">
     </div>
 
     <input id="file-input" class="hidden" type="file" accept="*/*" onchange="addFiles(this.files)">
@@ -27,17 +34,41 @@
 var stash    = document.getElementById("stash");
 var add      = document.getElementById("add");
 var progress = document.getElementById("progress");
+var fileInfo = document.getElementById("file-info");
+var upload   = document.getElementById("upload");
 
-stash.className = "stash-h1";
+var _files   = [];
+
+stash.className = "stash1";
 add.className = "";
 progress.className = "hidden";
+fileInfo.className = "hidden";
 
-function startUpload(files)
+upload.addEventListener("click", function startUpload ()
+{
+  // Upliad UI
+  stash.className = "stash2";
+  progress.className = "";
+
+  console.log("upload " + _files.length + " files");
+
+  var f = _files[0];
+  // uploadFile(f);
+
+  setTimeout(function () {
+    progress.style.width = "50%";
+  }, 1000);
+
+}, false);
+
+
+
+function startUpload2(files)
 {
   console.log(files);
 
   // Update UI
-  stash.className = "stash-h2"; // add animation
+  stash.className = "stash2"; // add animation
   add.className = "hidden";
   progress.className = "";
   progress.style.width = 0;
@@ -47,7 +78,7 @@ function startUpload(files)
     var file = files[i];
     console.log("filename : " + file.name);
     console.log("size     : " + file.size);
-    console.log("lastDate : " + file.LastModifiedDate);
+    console.log("lastDate : " + file.lastModifiedDate);
 
     uploadFile(file);
   }
@@ -63,7 +94,7 @@ function uploadFile(file)
     console.log(res.target.response);
     progress.style.width = stash.style.width;
   };
-  xhr.upload.addEventListener("progress", function(e) {
+  xhr.upload.addEventListener(" progress", function(e) {
     if (e.lengthComputable) {
       console.log(e.loaded / e.total);
       var percentage = e.loaded / e.total;
@@ -79,24 +110,46 @@ function uploadFile(file)
   xhr.send(form);
 }
 
+function loadPreview (file)
+{
+  console.log(file);
+  if (file.type.indexOf("image") >= 0)
+  {
 
+  }
+
+  var reader = new FileReader();
+  reader.onload = function(evt) {
+    // console.log(evt.target.result);
+  };
+  reader.readAsBinaryString(file);
+}
 
 
 function addFiles(files)
 {
-  startUpload(files);
+  add.className = "hidden";
+  fileInfo.className = "";
+  document.getElementById("filename").innerHTML = files[0].name;
+
+  // startUpload(files);
+  loadPreview(files[0]);
 }
+
 
 add.addEventListener("dragenter", function dragenter (e)
 {
+  console.log(e);
   e.stopPropagation();
   e.preventDefault();
+
 
   this.className = "green";
   console.log("dragenter");
 }, false);
 add.addEventListener("dragover", function dragenter (e)
 {
+  console.log(e);
   e.stopPropagation();
   e.preventDefault();
 
