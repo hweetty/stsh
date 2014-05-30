@@ -13,6 +13,10 @@
       <label class="info center">Drag file here - animate to 'x'</label>
     </div>
 
+    <div id="preview" class="hidden">
+      <img id="preview-img" class="">
+    </div>
+
     <div id="progress" class="">
     </div>
 
@@ -21,7 +25,7 @@
         <img src="">
       </div>
       <label id="filename" class="text">file.png</label>
-      <input id="upload" class="" type="button" value="Upload">
+      <span id="upload" class="">Upload</span>
     </div>
 
     <input id="file-input" class="hidden" type="file" accept="*/*" onchange="addFiles(this.files)">
@@ -46,6 +50,7 @@ fileInfo.className = "hidden";
 
 upload.addEventListener("click", function startUpload ()
 {
+  console.log("clicked upload");
   // Upliad UI
   stash.className = "stash2";
   progress.className = "";
@@ -113,8 +118,13 @@ function uploadFile(file)
 function loadPreview (file)
 {
   console.log(file);
+  document.getElementById("preview").className = "";
+
   if (file.type.indexOf("image") >= 0)
   {
+    document.getElementById("preview-img").style.background = "url(" + URL.createObjectURL(file) + ") no-repeat center";
+    document.getElementById("preview-img").className = "";
+    console.log(URL.createObjectURL(file));
 
   }
 

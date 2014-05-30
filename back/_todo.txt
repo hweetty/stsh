@@ -4,9 +4,18 @@ WORKING
 
 - work on frontend
     - style upload button
-    - better progress bar update (average it out)
     - preview images, docs
-    - 
+    - show file size somewhere
+    - check for files too large (and display error message)
+    - better progress bar update (average it out)
+    - access code still needed?
+    - qr code of url
+
+- Backend
+    - check db for expiry
+    - update download stats
+    - pipe download instead of going through s3 (but cache too)
+    - listen for post events manually
 
 - get ssl certs
 - add certs to node
