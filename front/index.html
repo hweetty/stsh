@@ -1,7 +1,7 @@
 <html>
 
 <head>
-
+<link href='http://fonts.googleapis.com/css?family=Josefin+Sans:100' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="style.css">
 
 </head>
@@ -21,11 +21,11 @@
     </div>
 
     <div id="file-info" class="">
-      <div id="preview" class="">
-        <img src="">
+      <label id="filename" class="">file.png</label>
+      <label id="size" class="">42KB</label>
+      <div id="upload" class="hidden">
+        <label id="upload-label">Upload</label>
       </div>
-      <label id="filename" class="text">file.png</label>
-      <span id="upload" class="">Upload</span>
     </div>
 
     <input id="file-input" class="hidden" type="file" accept="*/*" onchange="addFiles(this.files)">

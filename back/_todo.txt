@@ -4,7 +4,7 @@ WORKING
 
 - work on frontend
     - style upload button
-    - preview images, docs
+    - preview docs
     - show file size somewhere
     - check for files too large (and display error message)
     - better progress bar update (average it out)
@@ -23,6 +23,12 @@ WORKING
 
 
 DONE
+
+Front
+    - preview images
+
+Back
+
 
 - make sure upload still works
 - test packages.json (install)
