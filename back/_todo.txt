@@ -10,6 +10,7 @@ WORKING
     - better progress bar update (average it out)
     - access code still needed?
     - qr code of url
+    - use most frequent colour for progress bar and button
 
 - Backend
     - check db for expiry

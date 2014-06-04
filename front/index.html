@@ -7,30 +7,28 @@
 </head>
 <body>
 
-  <div id="stash" class="">
+<div id="menu">
+  <label>stsh</label>
+</div>
 
-    <div id="add" class="hidden">
-      <label class="info center">Drag file here - animate to 'x'</label>
-    </div>
 
-    <div id="preview" class="hidden">
-      <img id="preview-img" class="">
-    </div>
+<div id="stash">
 
-    <div id="progress" class="">
-    </div>
-
-    <div id="file-info" class="">
-      <label id="filename" class="">file.png</label>
-      <label id="size" class="">42KB</label>
-      <div id="upload" class="hidden">
-        <label id="upload-label">Upload</label>
-      </div>
-    </div>
-
-    <input id="file-input" class="hidden" type="file" accept="*/*" onchange="addFiles(this.files)">
+  <div id="add">
+    <label id="add-label" class="">Drag file here ---|</label>
   </div>
 
+  <div id="preview" class="hidden">
+    <img id="preview-img" class="">
+  </div>
+
+  <div id="upload" class="hidden">
+    <div id="progress" class=""> </div>
+    <label id="progress-label" class="">Upload bigger font</label>
+  </div>
+
+  <input id="file-input" class="hidden" type="file" accept="*/*" onchange="addFiles(this.files)">
+</div> <!-- /stash -->
 
 
 <script type="text/javascript">
@@ -38,56 +36,102 @@
 var stash    = document.getElementById("stash");
 var add      = document.getElementById("add");
 var progress = document.getElementById("progress");
-var fileInfo = document.getElementById("file-info");
+// var fileInfo = document.getElementById("file-info");
 var upload   = document.getElementById("upload");
 
 var _files   = [];
 
 stash.className = "stash1";
 add.className = "";
-progress.className = "hidden";
-fileInfo.className = "hidden";
+
+
+// Loads the preview of the first file given
+function addFiles (files)
+{
+  // Hide "Add text"
+  e("add").className = "hidden";
+  _file = files[0];
+  loadPreview(_file);
+}
+
+function loadPreview (file)
+{
+  console.log(file);
+  e("preview").className = "";
+  e("upload").className = "";
+
+  if (file.type.indexOf("image") >= 0)
+  {
+    document.getElementById("preview-img").style.background = "url(" + URL.createObjectURL(file) + ") no-repeat center";
+    document.getElementById("preview-img").className = "";
+    console.log(URL.createObjectURL(file));
+  }
+
+  var reader = new FileReader();
+  reader.onload = function(evt) {
+    // console.log(evt.target.result);
+  };
+  reader.readAsBinaryString(file);
+}
+
+
+var e = function (id)
+{
+  if (!this.d)
+    this.d = {};
+  if (!this.d[id])
+    this.d[id] = document.getElementById(id);
+  return this.d[id];
+}
 
 upload.addEventListener("click", function startUpload ()
 {
   console.log("clicked upload");
   // Upliad UI
-  stash.className = "stash2";
+  // stash.className = "stash2";
   progress.className = "";
 
   console.log("upload " + _files.length + " files");
 
   var f = _files[0];
+  f = _file
   // uploadFile(f);
 
-  setTimeout(function () {
-    progress.style.width = "50%";
-  }, 1000);
+  var p = 0;
+  var f = function ()
+  {
+    p++;
+    progress.style.width = p + "%";
+    if (p < 100)
+      setTimeout(f, 50);
+  };
+  f();
+  
 
 }, false);
 
 
 
-function startUpload2(files)
-{
-  console.log(files);
+// function startUpload2(files)
+// {
+//   console.log(files);
 
-  // Update UI
-  stash.className = "stash2"; // add animation
-  add.className = "hidden";
-  progress.className = "";
-  progress.style.width = 0;
+//   // Update UI
+//   stash.className = "stash2"; // add animation
+//   add.className = "hidden";
+//   progress.className = "";
+//   progress.style.width = 0;
 
-  for (var i = 0; i < files.length; i ++)
-  {
-    var file = files[i];
-    console.log("filename : " + file.name);
-    console.log("size     : " + file.size);
-    console.log("lastDate : " + file.lastModifiedDate);
+//   for (var i = 0; i < files.length; i ++)
+//   {
+//     var file = files[i];
+//     console.log("filename : " + file.name);
+//     console.log("size     : " + file.size);
+//     console.log("lastDate : " + file.lastModifiedDate);
 
-    uploadFile(file);
-  }
-}
+//     uploadFile(file);
+//   }
+// }
 
 function uploadFile(file)
 {
@@ -113,37 +157,6 @@ function uploadFile(file)
 
   xhr.open("post", url+"/api/1/upload", true);
   xhr.send(form);
-}
-
-function loadPreview (file)
-{
-  console.log(file);
-  document.getElementById("preview").className = "";
-
-  if (file.type.indexOf("image") >= 0)
-  {
-    document.getElementById("preview-img").style.background = "url(" + URL.createObjectURL(file) + ") no-repeat center";
-    document.getElementById("preview-img").className = "";
-    console.log(URL.createObjectURL(file));
-
-  }
-
-  var reader = new FileReader();
-  reader.onload = function(evt) {
-    // console.log(evt.target.result);
-  };
-  reader.readAsBinaryString(file);
-}
-
-
-function addFiles(files)
-{
-  add.className = "hidden";
-  fileInfo.className = "";
-  document.getElementById("filename").innerHTML = files[0].name;
-
-  // startUpload(files);
-  loadPreview(files[0]);
 }
 
 
