@@ -13,7 +13,7 @@ mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection 
 
 //Setup express
 app.configure(function() {
-	app.use(express.limit('10mb')); // 10mb hard limit, 2mb warning limit in upload.js
+	app.use(express.limit('20mb')); // 10mb hard limit, 2mb warning limit in upload.js
     app.use(express.bodyParser());  // upload files
 
 	app.use(function(req, res, next) {

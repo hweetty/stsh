@@ -1,155 +1,139 @@
+
 <html>
 
 <head>
-<link href='http://fonts.googleapis.com/css?family=Josefin+Sans:100' rel='stylesheet' type='text/css'>
+
   <link rel="stylesheet" href="style.css">
 
 </head>
 <body>
 
-<div id="menu">
-  <label>stsh</label>
-</div>
+  <div id="stash" class="">
+
+    <div id="preview" class="preview empty">
+
+      <!-- diplay add.png if no file -->
+    </div>
 
 
-<div id="stash">
+    <div id="info" class="info">
+      <div id="text">Drag file here</div>
+      <div id="progress" class="progress"></div>
+    </div>
 
-  <div id="add">
-    <label id="add-label" class="">Drag file here ---|</label>
+    <input id="file-input" class="hidden" type="file" accept="*/*" onchange="setFile(this.files[0])">
   </div>
 
-  <div id="preview" class="hidden">
-    <img id="preview-img" class="">
-  </div>
-
-  <div id="upload" class="hidden">
-    <div id="progress" class=""> </div>
-    <label id="progress-label" class="">Upload bigger font</label>
-  </div>
-
-  <input id="file-input" class="hidden" type="file" accept="*/*" onchange="addFiles(this.files)">
-</div> <!-- /stash -->
 
 
 <script type="text/javascript">
 
-var stash    = document.getElementById("stash");
-var add      = document.getElementById("add");
-var progress = document.getElementById("progress");
-// var fileInfo = document.getElementById("file-info");
-var upload   = document.getElementById("upload");
-
-var _files   = [];
-
-stash.className = "stash1";
-add.className = "";
-
-
-// Loads the preview of the first file given
-function addFiles (files)
-{
-  // Hide "Add text"
-  e("add").className = "hidden";
-  _file = files[0];
-  loadPreview(_file);
+var stsh = {
+    file: null,
+    uploading: false,
 }
 
-function loadPreview (file)
+function loadPreview ()
 {
+  var file = stsh.file;
+
   console.log(file);
-  e("preview").className = "";
-  e("upload").className = "";
+  e("preview").className = "preview";
 
   if (file.type.indexOf("image") >= 0)
   {
-    document.getElementById("preview-img").style.background = "url(" + URL.createObjectURL(file) + ") no-repeat center";
-    document.getElementById("preview-img").className = "";
+    e("preview").style.background = "url(" + URL.createObjectURL(file) + ") no-repeat center center";
     console.log(URL.createObjectURL(file));
   }
 
   var reader = new FileReader();
-  reader.onload = function(evt) {
-    // console.log(evt.target.result);
+  reader.onload = function(e)
+  {
+    var img = new Image;
+    img.onload = function() {
+      var s = document.getElementById("stash");
+      var preview = document.getElementById("preview");
+      // preview.style["background-size"] = "100%";
+
+      console.log("The width of the image is " + img.width + "px.");
+      
+
+      return;
+
+      var MAXWIDTH = 500;
+      var MAXHEIGHT = 309;
+      var dw = img.width / s.clientWidth;
+      var dh = img.height / s.clientHeight;
+      var scale = img.height/img.width;
+
+      if (img.width < s.clientWidth && img.height < s.clientHeight) {
+        // The loaded image is smaller than space availbable, shirnk
+        s.style.width = img.width;
+        s.style.height = img.height;
+      }
+      // Image is larger than space available, scale it
+      else if (dw > dh) {
+        s.style.width = MAXWIDTH;
+        s.style.height = MAXWIDTH * scale;
+      }
+      else {
+        scale = 1/scale;
+        s.style.width = MAXHEIGHT * scale;
+        s.style.height = MAXHEIGHT;
+      }
+
+      preview.style["background-size"] = s.width+"px " +s.height+ "px";
+
+      // s.style.width = img.width+"px";
+      // s.style.height = img.height+"px";
+
+    };
+
+    img.src = reader.result; 
   };
-  reader.readAsBinaryString(file);
+  
+  //reader.readAsDataURL(file);
 }
 
 
 var e = function (id)
 {
-  if (!this.d)
-    this.d = {};
-  if (!this.d[id])
-    this.d[id] = document.getElementById(id);
-  return this.d[id];
+  return document.getElementById(id);
 }
 
-upload.addEventListener("click", function startUpload ()
+
+// Called by clicking on preview img
+function upload ()
 {
-  console.log("clicked upload");
-  // Upliad UI
-  // stash.className = "stash2";
-  progress.className = "";
+  // Check file exists, then upload it
+  if (!stsh.file) {
+    console.log("uuuhuh, cannot upload null file...");
+    return;
+  }
 
-  console.log("upload " + _files.length + " files");
+  // Upload
+  stsh.speedThrottleCalled = false;
+  setTimeout(superFastConnectionCallback, 1000);
 
-  var f = _files[0];
-  f = _file
-  // uploadFile(f);
-
-  var p = 0;
-  var f = function ()
-  {
-    p++;
-    progress.style.width = p + "%";
-    if (p < 100)
-      setTimeout(f, 50);
-  };
-  f();
+  e("info").className = "info uploading";
+  var _w = 100;
   
-
-}, false);
-
-
-
-// function startUpload2(files)
-// {
-//   console.log(files);
-
-//   // Update UI
-//   stash.className = "stash2"; // add animation
-//   add.className = "hidden";
-//   progress.className = "";
-//   progress.style.width = 0;
-
-//   for (var i = 0; i < files.length; i ++)
-//   {
-//     var file = files[i];
-//     console.log("filename : " + file.name);
-//     console.log("size     : " + file.size);
-//     console.log("lastDate : " + file.lastModifiedDate);
-
-//     uploadFile(file);
-//   }
-// }
-
-function uploadFile(file)
-{
   var form = new FormData();
-  form.append("file", file);
-
+  form.append("file", stsh.file);
   var xhr = new XMLHttpRequest();
   xhr.onload = function(res) {
-    console.log(res.target.response);
-    progress.style.width = stash.style.width;
+    console.log("done");
+    document.getElementById("progress").style.width = _w+"px";
+
+    uploadCompleted(res.target.response);
   };
-  xhr.upload.addEventListener(" progress", function(e) {
+
+  xhr.upload.addEventListener("progress", function(e) {
     if (e.lengthComputable) {
       console.log(e.loaded / e.total);
       var percentage = e.loaded / e.total;
 
-      var width = stash.clientWidth;
-      progress.style.width = Math.round(width * percentage) + "px";
+      document.getElementById("progress").style.width = _w * percentage + "px";
     }
   });
 
@@ -157,22 +141,54 @@ function uploadFile(file)
 
   xhr.open("post", url+"/api/1/upload", true);
   xhr.send(form);
+
 }
 
 
-add.addEventListener("dragenter", function dragenter (e)
+function superFastConnectionCallback ()
 {
-  console.log(e);
+  if (!stsh.speedThrottleCalled) {
+    stsh.speedThrottleCalled = true;
+    uploadCompleted();
+  }
+}
+function uploadCompleted (res)
+{
+  if (res) {
+    res = JSON.parse(res);
+    stsh.url = res.path;
+    stsh.status = res.status;
+  }
+
+  if (!stsh.speedThrottleCalled)
+    return;
+
+
+  e("info").className = "info link";
+  var text = document.getElementById("text");
+  text.innerHTML = "<a href= '/f/" + stsh.url +"'>" + "stsh.ca/f/"+stsh.url +"</a>";
+}
+
+
+function setFile(f)
+{
+  stsh.file = f;
+  loadPreview();
+
+  e("info").className = "info upload";
+  e("text").innerHTML = "Upload";
+}
+
+e("preview").addEventListener("dragenter", function dragenter (e)
+{
   e.stopPropagation();
   e.preventDefault();
-
 
   this.className = "green";
   console.log("dragenter");
 }, false);
-add.addEventListener("dragover", function dragenter (e)
+e("preview").addEventListener("dragover", function dragenter (e)
 {
-  console.log(e);
   e.stopPropagation();
   e.preventDefault();
 
@@ -180,23 +196,43 @@ add.addEventListener("dragover", function dragenter (e)
   console.log("dragover");
 
 }, false);
-add.addEventListener("drop", function dragenter (e)
+e("preview").addEventListener("drop", function dragenter (e)
 {
   e.stopPropagation();
   e.preventDefault();
 
   var dt = e.dataTransfer;
   var files = dt.files;
-  addFiles(files);
+  
+  setFile(files[0]);
 
 }, false);
-add.addEventListener("click", function dragenter (e)
+
+e("preview").addEventListener("click", function dragenter (e)
 {
+  // tick();
   document.getElementById("file-input").click();
   console.log("clicked");
 }, false);
 
+e("info").addEventListener("click", function dragenter (e)
+{
+  if (stsh.url) {
+    // Nothing, go to there
+  } else if (stsh.file) {
+    upload ();
+  } else {
+
+  }
+
+}, false);
+
+function tick () {
+  console.log("tick...");
+  setTimeout(tick, 500);
+}
 
 </script>
 </body>
 </html>
+

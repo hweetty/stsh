@@ -17,12 +17,13 @@ var passwordHash = require('password-hash');
 var fs = require('fs');
 var s3 = require("../helpers/s3-helper.js");
 var File = require('../models/File.js');
+var async = require("async");
 
 // CONST
-var MAX_FILE_BYTES = 2 * 1024 * 1024; // 2MB
+var MAX_FILE_BYTES = 20 * 1024 * 1024; // 20MB
 
 
-
+// Content-Disposition: attachment; filename="fname.ext"
 exports.get = function (req, res)
 {
 	var path = req.params.path;
@@ -36,9 +37,20 @@ exports.get = function (req, res)
 		console.log(file);
 		if (!e)
 		{
-			var url = s3.getUrlForFile(file.fid);
-			console.log("redirecting to " + url);
-			res.redirect (url);
+			var stream = fs.createReadStream("/web/unsafe/stsh/"+file.fid);
+			stream.pipe(res);
+			stream.on("error", function (e) {
+				console.log("error creating readstream:", e);
+				res.send({
+					status: 400,
+					error: "file not found"
+				});
+				return;
+			});
+
+			// var url = s3.getUrlForFile(file.fid);
+			// console.log("redirecting to " + url);
+			// res.redirect (url);
 		}
 	}); // findOne
 	// look at cache
@@ -51,24 +63,32 @@ exports.get = function (req, res)
 }
 
 
-function verifyFile (file)
-{
-	return true;
-}
 function generateFID (callback)
 {
-	// TODO: remove numbers, ambiguous chars
 	crypto.randomBytes(32, function(ex, buf) {
-		callback (buf.toString('hex'));
+		if (ex)
+			callback(ex);
+
+		// // Remove ambiguous characters
+		// var CHARS = "0127oilmn";
+		// var str = buf.tostring("hex");
+		// for (var i = 0; i < str.length; i ++) {
+		// 	if (CHARS.indexOf(bug[i]))
+		// 		str = slice
+		// }
+		callback (null, buf.toString("hex"));
 	});
 }
+
+// returns a File entry
+
 function createDBEntry (fid, file, callback)
 {
 	console.log("creating db entry...");
-console.log(file);
-	var file = new File ({
+	console.log(file);
+	var f = new File ({
 		"fid"       : fid,
-		"path"		: fid.substring(0, 6),
+		"path"		: fid.substring(0, 6), // use 'ADJECTIVE + NOUN'
     	"num_downloads" : 0,
     	// "expiry_date"   : Date, // needed?
     	// "user_id"       : String,
@@ -76,12 +96,54 @@ console.log(file);
     	"filename"      : file.name
 	});
 
-	file.save (function saved (e)
-	{
-		callback(e || file);
+	f.save (function saved (e) {
+		callback(e, f);
 	}); // file.save
 }
+
 exports.post = function (req, res)
+{
+	var file = req.files.file;
+
+	async.waterfall([
+	    function verifyFile (callback) {
+	        callback(null);
+	    },
+	    function getFID (callback) {
+        	generateFID(callback);
+	    },
+	    function moveFile (fid, callback) {
+	    	var newPath = "/web/unsafe/stsh/" + fid
+	        fs.rename(file.ws.path, newPath, function (err) {
+	        	callback(err, fid);
+	        });
+	    },
+	    function createDb (fid, callback) {
+	    	createDBEntry (fid, file, callback);
+	    }
+	], function (err, file) {
+		if (err) {
+		console.log("err:");
+			console.log(err);
+			res.send ({
+				status: 400,
+				message: e
+			});
+		} else {
+		console.log("success:");
+			console.log (file);
+			res.send ({	
+				status: 200,
+				path: 	file.path,
+			});
+		}
+	});
+}
+// exports.post();
+
+
+
+exports.post_s3 = function (req, res)
 {
 	var file = req.files.file;
 
