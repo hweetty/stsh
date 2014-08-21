@@ -22,6 +22,14 @@ var async = require("async");
 // CONST
 var MAX_FILE_BYTES = 20 * 1024 * 1024; // 20MB
 
+// Create folder if not existent
+var FOLDER = "/web/unsafe/stsh/";
+if (!fs.existsSync(FOLDER)) {
+    fs.mkdir(path,function(e) {
+    	if (e)
+    		console.log("error creating unsafe folder at '"+FOLDER+"'")
+    }
+}
 
 // Content-Disposition: attachment; filename="fname.ext"
 exports.get = function (req, res)
