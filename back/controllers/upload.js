@@ -27,8 +27,8 @@ var FOLDER = "/web/unsafe/stsh/";
 if (!fs.existsSync(FOLDER)) {
     fs.mkdir(path,function(e) {
     	if (e)
-    		console.log("error creating unsafe folder at '"+FOLDER+"'")
-    }
+    		console.log("error creating '"+FOLDER+"'");
+    });
 }
 
 // Content-Disposition: attachment; filename="fname.ext"
