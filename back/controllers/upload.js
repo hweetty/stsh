@@ -25,7 +25,7 @@ var MAX_FILE_BYTES = 20 * 1024 * 1024; // 20MB
 // Create folder if not existent
 var FOLDER = "/web/unsafe/stsh/";
 if (!fs.existsSync(FOLDER)) {
-    fs.mkdir(path,function(e) {
+    fs.mkdir(FOLDER,function(e) {
     	if (e)
     		console.log("error creating '"+FOLDER+"'");
     });
