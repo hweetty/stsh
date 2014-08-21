@@ -15,7 +15,7 @@ current assumptions:
 var crypto = require('crypto');
 var passwordHash = require('password-hash');
 var fs = require('fs');
-var s3 = require("../helpers/s3-helper.js");
+//var s3 = require("../helpers/s3-helper.js");
 var File = require('../models/File.js');
 var async = require("async");
 
@@ -127,7 +127,7 @@ exports.post = function (req, res)
 			console.log(err);
 			res.send ({
 				status: 400,
-				message: e
+				message: err
 			});
 		} else {
 		console.log("success:");

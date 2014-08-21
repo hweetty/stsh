@@ -156,6 +156,7 @@ function uploadCompleted (res)
 {
   if (res) {
     res = JSON.parse(res);
+    console.log(res);
     stsh.url = res.path;
     stsh.status = res.status;
   }
