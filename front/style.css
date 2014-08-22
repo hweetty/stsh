@@ -9,12 +9,26 @@ html, body {
   margin: 0;
   padding: 0;
   border: 0;
+  min-height: 480px;
+  overflow: hidden;
 }
 
+.stsh {
+  margin-top: 75px;
+}
+@media (max-height: 550px) {
+  .stsh {
+    margin-top: 30px;
+  }
+}
 .preview {
+  border: 6px dashed #DDD;
   width: 500px;
   height: 309px;
-  margin: auto;
+  margin: 25px auto;
+}
+.empty {
+  background: url("/add.png") center center no-repeat;
 }
 
 .info {
