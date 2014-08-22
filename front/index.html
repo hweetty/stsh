@@ -14,8 +14,9 @@
     </div>
 
     <div id="info" class="info">
-      <div id="text">Drag file here</div>
+      <div id="text" class="text"></div>
       <div id="progress" class="progress"></div>
+      <div id="restart" class="restart"></div>
     </div>
 
     <input id="file-input" class="hidden" type="file" accept="*/*" onchange="setFile(this.files[0])">
@@ -25,10 +26,15 @@
 <script type="text/javascript">
 
 window.e = function (id) { return document.getElementById(id) };
-var stsh = {
+var stsh;
+
+function reset () {
+  stsh = {
     file: null,
-    uploading: false,
+    uploading: false
+  }
 }
+reset();
 
 function loadPreview ()
 {
@@ -115,7 +121,9 @@ function upload ()
   xhr.onload = function(res) {
     e("progress").style.width = _w+"px";
 
-    uploadCompleted(res.target.response);
+    setTimeout (function () {
+      uploadCompleted(res.target.response);
+    }, 1500);
   };
 
   xhr.upload.addEventListener("progress", function(event) {
@@ -129,7 +137,10 @@ function upload ()
   var url = window.location.href.indexOf("2718") >= 0 ? "" : "http://localhost:2718";
 
   xhr.open("post", url+"/api/1/upload", true);
-  xhr.send(form);
+
+  setTimeout (function () {
+    xhr.send(form);
+  }, 500);
 }
 
 
@@ -160,43 +171,50 @@ function uploadCompleted (res)
 
 function setFile(f)
 {
+  console.log("setfile");
   stsh.file = f;
   loadPreview();
 
-  e("info").className = "info upload";
-  e("text").innerHTML = "Upload";
+  e("preview").className = "preview";
+  e("info").className = "info upload action";
+  e("text").innerHTML = "upload";
 }
 
-e("preview").addEventListener("dragenter", function dragenter (e)
+var pre = document.getElementById("preview");
+
+pre.addEventListener("dragenter", dragenter, false);
+pre.addEventListener("dragover", dragover, false);
+pre.addEventListener("drop", drop, false);
+
+function dragenter (e)
 {
   e.stopPropagation();
   e.preventDefault();
 
-  this.className = "green";
+  this.className = "preview empty green";
   console.log("dragenter");
-}, false);
-e("preview").addEventListener("dragover", function dragenter (e)
+}
+function dragover (e)
 {
   e.stopPropagation();
   e.preventDefault();
 
-  this.className = "green";
-  console.log("dragover");
+  this.className = "preview empty";
+  console.log("dragleave");
 
-}, false);
-e("preview").addEventListener("drop", function dragenter (e)
+}
+function drop (e)
 {
+console.log("drop");
   e.stopPropagation();
   e.preventDefault();
-
   var dt = e.dataTransfer;
   var files = dt.files;
   
   setFile(files[0]);
+}
 
-}, false);
-
-e("preview").addEventListener("click", function dragenter (e)
+pre.addEventListener("click", function dragenter (e)
 {
   // tick();
   document.getElementById("file-input").click();
@@ -212,10 +230,12 @@ e("info").addEventListener("click", function dragenter (e)
   } else {
 
   }
-
 }, false);
 
-
+e("restart").addEventListener("click", function dragenter (e)
+{
+  window.location = window.location;
+}, false);
 </script>
 </body>
 </html>
