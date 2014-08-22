@@ -100,7 +100,7 @@ function generateFID (callback)
 
 // returns a File entry
 
-function createDBEntry (fid, file, callback)
+function createDBEntry (fid, file, ip, callback)
 {
 	console.log("creating db entry...");
 	console.log(file);
@@ -108,6 +108,7 @@ function createDBEntry (fid, file, callback)
 		"fid"       : fid,
 		"path"		: fid.substring(0, 6), // use 'ADJECTIVE + NOUN'
     	"num_downloads" : 0,
+    	"ip"						: ip,
     	// "expiry_date"   : Date, // needed?
     	// "user_id"       : String,
     	"access_code"   : fid.substring(10, 14),
@@ -122,6 +123,7 @@ function createDBEntry (fid, file, callback)
 exports.post = function (req, res)
 {
 	var file = req.files.file;
+	var ip = req.connection.remoteAddress;
 
 	async.waterfall([
 	    function verifyFile (callback) {
@@ -137,7 +139,7 @@ exports.post = function (req, res)
 	        });
 	    },
 	    function createDb (fid, callback) {
-	    	createDBEntry (fid, file, callback);
+	    	createDBEntry (fid, file, ip, callback);
 	    }
 	], function (err, file) {
 		if (err) {

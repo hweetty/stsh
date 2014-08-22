@@ -6,6 +6,7 @@ var File = mongoose.Schema({
 	"path"		: { type: String, required: true },
     "num_downloads" : { type: Number, required: true },
     "expiry_date"   : Date, // needed?
+    "ip"            : String,
     "user_id"       : String,
     "access_code"   : { type: String, required: true },
     "filename"      : { type: String, required: true }
