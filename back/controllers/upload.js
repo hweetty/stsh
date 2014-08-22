@@ -25,10 +25,20 @@ var MAX_FILE_BYTES = 20 * 1024 * 1024; // 20MB
 // Create folder if not existent
 var FOLDER = "/web/unsafe/stsh/";
 if (!fs.existsSync(FOLDER)) {
-    fs.mkdir(FOLDER,function(e) {
-    	if (e)
-    		console.log("error creating '"+FOLDER+"'");
-    });
+		var path = require("path");
+    fs.mkdirParent = function(dirPath) {
+		  fs.mkdir(dirPath, function(error) {
+		    //When it fail in this way, do the custom steps
+		    if (error && error.errno === 34) {
+		      //Create all the parents recursively
+		      fs.mkdirParent(path.dirname(dirPath));
+		      //And then the directory
+		      fs.mkdirParent(dirPath);
+		    }
+  	});
+	};
+	
+	fs.mkdirParent(FOLDER);
 }
 
 // Content-Disposition: attachment; filename="fname.ext"
