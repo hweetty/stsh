@@ -28,6 +28,7 @@
 
 <script type="text/javascript">
 
+window.e = function (id) { return document.getElementById(id) };
 var stsh = {
     file: null,
     uploading: false,
@@ -96,12 +97,6 @@ function loadPreview ()
 }
 
 
-var e = function (id)
-{
-  return document.getElementById(id);
-}
-
-
 // Called by clicking on preview img
 function upload ()
 {
@@ -122,18 +117,16 @@ function upload ()
   form.append("file", stsh.file);
   var xhr = new XMLHttpRequest();
   xhr.onload = function(res) {
-    console.log("done");
-    document.getElementById("progress").style.width = _w+"px";
+    e("progress").style.width = _w+"px";
 
     uploadCompleted(res.target.response);
   };
 
-  xhr.upload.addEventListener("progress", function(e) {
-    if (e.lengthComputable) {
-      console.log(e.loaded / e.total);
-      var percentage = e.loaded / e.total;
+  xhr.upload.addEventListener("progress", function(event) {
+    if (event.lengthComputable) {
+      var percentage = event.loaded / event.total;
 
-      document.getElementById("progress").style.width = _w * percentage + "px";
+      e("progress").style.width = _w * percentage + "px";
     }
   });
 
@@ -141,7 +134,6 @@ function upload ()
 
   xhr.open("post", url+"/api/1/upload", true);
   xhr.send(form);
-
 }
 
 
@@ -163,7 +155,6 @@ function uploadCompleted (res)
 
   if (!stsh.speedThrottleCalled || !stsh.url)
     return;
-
 
   e("info").className = "info link";
   var text = document.getElementById("text");
@@ -228,10 +219,6 @@ e("info").addEventListener("click", function dragenter (e)
 
 }, false);
 
-function tick () {
-  console.log("tick...");
-  setTimeout(tick, 500);
-}
 
 </script>
 </body>
