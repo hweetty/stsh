@@ -66,6 +66,12 @@ exports.get = function (req, res)
 				return;
 			});
 
+			File.update ({
+				"path"		: path
+			}, {
+				$inc:{num_downloads:1}
+			}, function (e) { console.log(e); });
+			
 			// var url = s3.getUrlForFile(file.fid);
 			// console.log("redirecting to " + url);
 			// res.redirect (url);
