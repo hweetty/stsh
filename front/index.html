@@ -161,7 +161,7 @@ function uploadCompleted (res)
     stsh.status = res.status;
   }
 
-  if (!stsh.speedThrottleCalled)
+  if (!stsh.speedThrottleCalled || !stsh.url)
     return;
 
 

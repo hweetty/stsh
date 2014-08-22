@@ -37,7 +37,7 @@ if (!fs.existsSync(FOLDER)) {
 		    }
   	});
 	};
-	
+
 	fs.mkdirParent(FOLDER);
 }
 
