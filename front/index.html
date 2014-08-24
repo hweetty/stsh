@@ -242,6 +242,14 @@ function uploadCompleted (res)
 
 function setFile(f)
 {
+	// Check file size
+	console.log(f);
+	if (f.size > 15000000)
+	{
+		alert("Man that's a big file. We don't support that yet.\n\nPlease try a smaller file");
+		return;
+	}
+
 	console.log("setfile");
 	stsh.file = f;
 	loadPreview();
