@@ -3,25 +3,24 @@
 
 <head>
 
-  <link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="style.css">
 
 </head>
 <body>
 
-  <div id="stash" class="stsh">
+	<div id="stash" class="stsh">
 
-    <div id="preview" class="preview empty">
-    </div>
+		<div id="preview" class="preview empty">
+		</div>
 
-    <div id="info" class="info">
-      <div id="text" class="text"></div>
-      <div id="progress" class="progress"></div>
-      <div id="restart" class="restart"></div>
-    </div>
+		<div id="info" class="info">
+			<div id="text" class="text"></div>
+			<div id="progress" class="progress"></div>
+			<div id="restart" class="restart"></div>
+		</div>
 
-    <input id="file-input" class="hidden" type="file" accept="*/*" onchange="setFile(this.files[0])">
-  </div>
-
+		<input id="file-input" class="hidden" type="file" accept="*/*" onchange="setFile(this.files[0])">
+	</div>
 
 <script type="text/javascript">
 
@@ -29,155 +28,224 @@ window.e = function (id) { return document.getElementById(id) };
 var stsh;
 
 function reset () {
-  stsh = {
-    file: null,
-    uploading: false
-  }
+	stsh = {
+		file: null,
+		uploading: false
+	}
 }
 reset();
 
 function loadPreview ()
 {
-  var file = stsh.file;
+	var file = stsh.file;
 
-  console.log(file);
-  e("preview").className = "preview";
+	console.log(file);
+	e("preview").className = "preview";
 
-  if (file.type.indexOf("image") >= 0)
-  {
-    e("preview").style.background = "url(" + URL.createObjectURL(file) + ") no-repeat center center";
-    console.log(URL.createObjectURL(file));
-  }
+	if (file.type.indexOf("image") >= 0)
+	{
+		e("preview").style.background = "url(" + URL.createObjectURL(file) + ") no-repeat center center / 100%";
+		e("preview").className = "preview hidden";
+		console.log(URL.createObjectURL(file));
+	}
 
-  var reader = new FileReader();
-  reader.onload = function(e)
-  {
-    var img = new Image;
-    img.onload = function() {
-      var s = document.getElementById("stash");
-      var preview = document.getElementById("preview");
-      // preview.style["background-size"] = "100%";
+	var reader = new FileReader();
+	reader.onload = function(e)
+	{
+		var img = new Image;
+		img.onload = function() {
+			var s = document.getElementById("stash");
+			var preview = document.getElementById("preview");
 
-      console.log("The width of the image is " + img.width + "px.");
-      
+			document.getElementById("preview").className = "preview";
 
-      return;
+			var size = {
+				w: img.width,
+				h: img.height
+			};
+			var bounds = {
+				w: preview.clientWidth,
+				h: 400//, //preview.clientHeight
+			};
 
-      var MAXWIDTH = 500;
-      var MAXHEIGHT = 309;
-      var dw = img.width / s.clientWidth;
-      var dh = img.height / s.clientHeight;
-      var scale = img.height/img.width;
+			var s = sizeThatFitsBounds(size, bounds);
 
-      if (img.width < s.clientWidth && img.height < s.clientHeight) {
-        // The loaded image is smaller than space availbable, shirnk
-        s.style.width = img.width;
-        s.style.height = img.height;
-      }
-      // Image is larger than space available, scale it
-      else if (dw > dh) {
-        s.style.width = MAXWIDTH;
-        s.style.height = MAXWIDTH * scale;
-      }
-      else {
-        scale = 1/scale;
-        s.style.width = MAXHEIGHT * scale;
-        s.style.height = MAXHEIGHT;
-      }
+			console.log("bounds: ");
+			console.log(bounds);
+			console.log(size);
+			console.log("size will be: ");
+			console.log(s);
 
-      preview.style["background-size"] = s.width+"px " +s.height+ "px";
+			preview.style.width = s.width + "px";
+			preview.style.height = s.height + "px";
+		};
 
-      // s.style.width = img.width+"px";
-      // s.style.height = img.height+"px";
-
-    };
-
-    img.src = reader.result; 
-  };
-  
-  //reader.readAsDataURL(file);
+		img.src = reader.result; 
+	};
+	
+	reader.readAsDataURL(file);
 }
+
+
+// size The size of the image
+// bounds The size of the bounds
+// returns Either the original image size if it is absolutely smaller than the bounds, or the maximum proportional size that will fit within the given bounds
+function sizeThatFitsBounds (size, bounds)
+{
+	var sw = size.w || size.width;
+	var sh = size.h || size.height;
+	var bw = bounds.w || bounds.width;
+	var bh = bounds.h || bounds.height;
+
+	// Will if fit?
+	if (sw <= bw && sh <= bh)
+		return size;
+
+	// Calculate size should match horizontal or vertical
+	var dw = sw / bw;
+	var dh = sh / bh;
+
+	if (dw > dh) {
+		// size will be maxed horizontally
+		sh = sh/sw * bw;
+		sw = bw;
+	} else {
+		// size will be maxed vertically
+		sw = sw/sh * bh;
+		sh = bh;
+	}
+
+	var newSize = {
+		w: sw,
+		h: sh,
+		width: sw,
+		height: sh
+	};
+	return newSize;
+}   
+
+
+function subset (a, b)
+{
+	var keys = Object.keys(a);
+	for (var i in keys)
+	{
+		var key = keys[i];
+		if (a[key] != b[key]) {
+			console.log("'" +key + "': " +a[key]+ " != " +b[key]);
+		}
+	}
+}
+
+var bounds = { w:50, h:70 };
+
+var sizes = [
+	// Both smaller
+	{ w:42, h:42 }, { w:42, h:42 },
+	// One smaller, on equal
+	{ w:42, h:70 }, { w:42, h:70 },
+	{ w:50, h:42 }, { w:50, h:42 },
+	// One smaller, one larger
+	{ w:21, h:70 }, { w:42, h:140 },
+	{ w:50, h:21 }, { w:100, h:42 },
+	// Both equal
+	{ w:50, h:70 }, { w:50, h:70 },
+	// One equal, one larger
+	{ w:25, h:70 }, { w:50, h:140 },
+	{ w:50, h:35 }, { w:100, h:70 },
+	// Both larger
+	{ w:50, h:35 }, { w:100, h:70 },
+]
+
+
+for (var i = 0; i < sizes.length; i += 2)
+{
+	console.log(i);
+	subset(sizes[i], sizeThatFitsBounds(sizes[i+1], bounds));
+}
+console.log("done testing");
+
 
 
 // Called by clicking on preview img
 function upload ()
 {
-  // Check file exists, then upload it
-  if (!stsh.file) {
-    console.log("uuuhuh, cannot upload null file...");
-    return;
-  }
+	// Check file exists, then upload it
+	if (!stsh.file) {
+		console.log("uuuhuh, cannot upload null file...");
+		return;
+	}
 
-  // Upload
-  stsh.speedThrottleCalled = false;
-  setTimeout(superFastConnectionCallback, 1000);
+	// Upload
+	stsh.speedThrottleCalled = false;
+	setTimeout(superFastConnectionCallback, 1000);
 
-  e("info").className = "info uploading";
-  var _w = 100;
-  
-  var form = new FormData();
-  form.append("file", stsh.file);
-  var xhr = new XMLHttpRequest();
-  xhr.onload = function(res) {
-    e("progress").style.width = _w+"px";
+	e("info").className = "info uploading";
+	var _w = 100;
+	
+	var form = new FormData();
+	form.append("file", stsh.file);
+	var xhr = new XMLHttpRequest();
+	xhr.onload = function(res) {
+		e("progress").style.width = _w+"px";
 
-    setTimeout (function () {
-      uploadCompleted(res.target.response);
-    }, 1500);
-  };
+		setTimeout (function () {
+			uploadCompleted(res.target.response);
+		}, 1500);
+	};
 
-  xhr.upload.addEventListener("progress", function(event) {
-    if (event.lengthComputable) {
-      var percentage = event.loaded / event.total;
+	xhr.upload.addEventListener("progress", function(event) {
+		if (event.lengthComputable) {
+			var percentage = event.loaded / event.total;
 
-      e("progress").style.width = _w * percentage + "px";
-    }
-  });
+			e("progress").style.width = _w * percentage + "px";
+		}
+	});
 
-  var url = window.location.href.indexOf("2718") >= 0 ? "" : "http://localhost:2718";
+	var url = window.location.href.indexOf("2718") >= 0 ? "" : "http://localhost:2718";
 
-  xhr.open("post", url+"/api/1/upload", true);
+	xhr.open("post", url+"/api/1/upload", true);
 
-  setTimeout (function () {
-    xhr.send(form);
-  }, 500);
+	setTimeout (function () {
+		xhr.send(form);
+	}, 500);
 }
 
 
 function superFastConnectionCallback ()
 {
-  if (!stsh.speedThrottleCalled) {
-    stsh.speedThrottleCalled = true;
-    uploadCompleted();
-  }
+	if (!stsh.speedThrottleCalled) {
+		stsh.speedThrottleCalled = true;
+		uploadCompleted();
+	}
 }
 function uploadCompleted (res)
 {
-  if (res) {
-    res = JSON.parse(res);
-    console.log(res);
-    stsh.url = res.path;
-    stsh.status = res.status;
-  }
+	if (res) {
+		res = JSON.parse(res);
+		console.log(res);
+		stsh.url = res.path;
+		stsh.status = res.status;
+	}
 
-  if (!stsh.speedThrottleCalled || !stsh.url)
-    return;
+	if (!stsh.speedThrottleCalled || !stsh.url)
+		return;
 
-  e("info").className = "info link";
-  var text = document.getElementById("text");
-  text.innerHTML = "<a href= '/f/" + stsh.url +"'>" + "stsh.ca/f/"+stsh.url +"</a>";
+	e("info").className = "info link";
+	var text = document.getElementById("text");
+	text.innerHTML = "<a href= '/f/" + stsh.url +"'>" + "stsh.ca/f/"+stsh.url +"</a>";
 }
 
 
 function setFile(f)
 {
-  console.log("setfile");
-  stsh.file = f;
-  loadPreview();
+	console.log("setfile");
+	stsh.file = f;
+	loadPreview();
 
-  e("preview").className = "preview";
-  e("info").className = "info upload action";
-  e("text").innerHTML = "upload";
+	e("preview").className = "preview";
+	e("info").className = "info upload action";
+	e("text").innerHTML = "upload";
 }
 
 var pre = document.getElementById("preview");
@@ -188,53 +256,53 @@ pre.addEventListener("drop", drop, false);
 
 function dragenter (e)
 {
-  e.stopPropagation();
-  e.preventDefault();
+	e.stopPropagation();
+	e.preventDefault();
 
-  this.className = "preview empty green";
-  console.log("dragenter");
+	this.className = "preview empty green";
+	console.log("dragenter");
 }
 function dragover (e)
 {
-  e.stopPropagation();
-  e.preventDefault();
+	e.stopPropagation();
+	e.preventDefault();
 
-  this.className = "preview empty";
-  console.log("dragleave");
+	this.className = "preview empty";
+	console.log("dragleave");
 
 }
 function drop (e)
 {
 console.log("drop");
-  e.stopPropagation();
-  e.preventDefault();
-  var dt = e.dataTransfer;
-  var files = dt.files;
-  
-  setFile(files[0]);
+	e.stopPropagation();
+	e.preventDefault();
+	var dt = e.dataTransfer;
+	var files = dt.files;
+	
+	setFile(files[0]);
 }
 
 pre.addEventListener("click", function dragenter (e)
 {
-  // tick();
-  document.getElementById("file-input").click();
-  console.log("clicked");
+	// tick();
+	document.getElementById("file-input").click();
+	console.log("clicked");
 }, false);
 
 e("info").addEventListener("click", function dragenter (e)
 {
-  if (stsh.url) {
-    // Nothing, go to there
-  } else if (stsh.file) {
-    upload ();
-  } else {
+	if (stsh.url) {
+		// Nothing, go to there
+	} else if (stsh.file) {
+		upload ();
+	} else {
 
-  }
+	}
 }, false);
 
 e("restart").addEventListener("click", function dragenter (e)
 {
-  window.location = window.location;
+	window.location = window.location;
 }, false);
 </script>
 </body>
