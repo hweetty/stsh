@@ -193,7 +193,12 @@ function upload ()
 			uploadCompleted(res.target.response);
 		}, 1500);
 	};
+	xhr.onerror = function (err) {
+		console.log("error with xhr:");
+		console.log(err);
 
+		alert("Something went wrong during upload. Maybe the file is too big?");
+	}
 	xhr.upload.addEventListener("progress", function(event) {
 		if (event.lengthComputable) {
 			var percentage = event.loaded / event.total;
