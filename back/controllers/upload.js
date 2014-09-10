@@ -53,7 +53,7 @@ exports.get = function (req, res)
 	}, function (e, file)
 	{
 		console.log(file);
-		if (file.restrict_ip && req.connection.remoteAddress.indexOf(file.restrict_ip) >= 0)
+		if (file.restrict_ip && req.connection.remoteAddress.indexOf(file.restrict_ip) < 0)
 		{
 			res.send({
 				status: 400,
