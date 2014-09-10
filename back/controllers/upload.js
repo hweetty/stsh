@@ -53,6 +53,14 @@ exports.get = function (req, res)
 	}, function (e, file)
 	{
 		console.log(file);
+		if (file.restrict_ip && req.connection.remoteAddress.indexOf(file.restrict_ip) >= 0)
+		{
+			res.send({
+				status: 400,
+				error: "file not found "
+			});
+			return;
+		}
 		if (!e)
 		{
 			var stream = fs.createReadStream("/web/unsafe/stsh/"+file.fid);
@@ -131,6 +139,17 @@ exports.post = function (req, res)
 	var file = req.files.file;
 	var ip = req.connection.remoteAddress;
 
+
+	// TODO: check file is not empty (ws is not empty)
+	if (!file || !file.ws)
+	{
+		res.send({
+			status: 400,
+			message: "empty file"
+		});
+		return;
+	}
+	
 	async.waterfall([
 	    function verifyFile (callback) {
 	        callback(null);
